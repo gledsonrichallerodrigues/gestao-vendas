@@ -6,4 +6,6 @@ import com.gvendas.gestao_vendas.entidades.Categoria;
 
 public interface CategoriaRepositorio extends JpaRepository<Categoria, Long> {
 
+	Categoria findByNome(String nome);
+	
 }
