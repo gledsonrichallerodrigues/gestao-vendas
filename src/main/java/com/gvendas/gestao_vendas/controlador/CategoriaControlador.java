@@ -30,7 +30,7 @@ public class CategoriaControlador {
 
 	@Autowired
 	private CategoriaServico categoriaServico;
-
+	
 	@Operation(summary = "Listar todas")
 	@GetMapping
 	public List<Categoria> listarTodas() {

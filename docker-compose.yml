@@ -11,3 +11,13 @@ services:
       MYSQL_PASSWORD: gvendas
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: gvendas_db
+
+  jaeger:
+    image: jaegertracing/jaeger:2.1.0
+    container_name: jaeger
+    ports:
+      - 16686:16686
+      - 4317:4317
+      - 4318:4318
+      - 5778:5778
+      - 9411:9411
