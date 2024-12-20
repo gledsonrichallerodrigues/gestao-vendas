@@ -3,6 +3,8 @@ package com.gvendas.gestao_vendas.controlador;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gvendas.gestao_vendas.entidades.Categoria;
 import com.gvendas.gestao_vendas.servico.CategoriaServico;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -29,14 +34,40 @@ import jakarta.validation.Valid;
 public class CategoriaControlador {
 
 	@Autowired
+	private Tracer tracer;
+
+	private static final Logger logger = LoggerFactory.getLogger(CategoriaControlador.class);
+
+	@Autowired
 	private CategoriaServico categoriaServico;
-	
+
+	@WithSpan
 	@Operation(summary = "Listar todas")
 	@GetMapping
 	public List<Categoria> listarTodas() {
 		return categoriaServico.listarTodas();
 	}
 
+	@WithSpan
+	@Operation(summary = "Teste OpenTelemetry")
+	@GetMapping("/testeopentelemetry")
+	public String testeOpentelemetry() {
+		logger.info("Texto Logger Info");
+		return "String Teste OpenTelemetry";
+	}
+
+	@Operation(summary = "Teste Jaeger")
+	@GetMapping("/testejaeger")
+	public String testeJaeger() {
+        Span span = tracer.spanBuilder("testeJaeger").startSpan();
+        try {
+        	return "String Teste Jaeger";
+        } finally {
+            span.end();
+        }						
+	}
+
+	@WithSpan
 	@Operation(summary = "Buscar por id")
 	@GetMapping("/{codigo}")
 	public ResponseEntity<Optional<Categoria>> buscarPorId(@PathVariable Long codigo) {
@@ -57,7 +88,7 @@ public class CategoriaControlador {
 	public ResponseEntity<Categoria> atualizar(@PathVariable Long codigo, @Valid @RequestBody Categoria categoria) {
 		return ResponseEntity.ok(categoriaServico.atualizar(codigo, categoria));
 	}
-	
+
 	@Operation(summary = "Deletar")
 	@DeleteMapping("/{codigo}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
