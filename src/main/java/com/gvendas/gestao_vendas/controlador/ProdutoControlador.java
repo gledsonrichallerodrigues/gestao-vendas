@@ -33,17 +33,18 @@ public class ProdutoControlador {
 	private ProdutoServico produtoServico;
 
 	@WithSpan
-	@Operation(summary = "Listar todos")
-	@GetMapping
-	public List<Produto> listarTodos() {
-		return produtoServico.listarTodos();
+	@Operation(summary = "Listar todos por categoria")
+	@GetMapping("/categoria/{codigoCategoria}")
+	public ResponseEntity<List<Produto>> listarTodos(@PathVariable Long codigoCategoria) {
+		List<Produto> produtos = produtoServico.listarTodos(codigoCategoria);
+		return produtos.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(produtos);
 	}
 
 	@WithSpan
 	@Operation(summary = "Buscar por id")
 	@GetMapping("/{codigo}")
 	public ResponseEntity<Optional<Produto>> buscarPorId(@PathVariable Long codigo) {
-		Optional<Produto> produto = produtoServico.buscarPorId(codigo);
+		Optional<Produto> produto = produtoServico.buscarPorCodigo(codigo);
 		return produto.isPresent() ? ResponseEntity.ok(produto) : ResponseEntity.notFound().build();
 
 	}
