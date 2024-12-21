@@ -32,6 +32,5 @@ public class OpenTelemetryConfig {
 		}
 		// Retorna o Tracer para ser usado em sua aplicação
 		return GlobalOpenTelemetry.getTracer("gestao-vendas");
-
-	}
+	}	
 }
