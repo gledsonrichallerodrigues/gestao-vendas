@@ -3,6 +3,8 @@ package com.gvendas.gestao_vendas.entidades;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+import org.hibernate.validator.constraints.Length;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "produto")
@@ -22,6 +25,8 @@ public class Produto {
 	private Long codigo;
 
 	@Column(name = "descricao")
+	@NotBlank(message = "Descrição")
+	@Length(min = 3, max = 50, message = "Descrição")
 	private String descricao;
 
 	@Column(name = "quantidade")

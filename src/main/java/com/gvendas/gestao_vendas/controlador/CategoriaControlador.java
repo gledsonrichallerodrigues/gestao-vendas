@@ -76,6 +76,7 @@ public class CategoriaControlador {
 
 	}
 
+	@WithSpan
 	@Operation(summary = "Salvar")
 	@PostMapping
 	public ResponseEntity<Categoria> salvar(@Valid @RequestBody Categoria categoria) {
@@ -83,12 +84,14 @@ public class CategoriaControlador {
 		return ResponseEntity.status(HttpStatus.CREATED).body(categoriaSalva);
 	}
 
+	@WithSpan
 	@Operation(summary = "Atualizar")
 	@PutMapping("/{codigo}")
 	public ResponseEntity<Categoria> atualizar(@PathVariable Long codigo, @Valid @RequestBody Categoria categoria) {
 		return ResponseEntity.ok(categoriaServico.atualizar(codigo, categoria));
 	}
 
+	@WithSpan
 	@Operation(summary = "Deletar")
 	@DeleteMapping("/{codigo}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
