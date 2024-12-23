@@ -18,6 +18,9 @@ public class ProdutoServico {
 
 	@Autowired
 	private ProdutoRepositorio produtoRepositorio;
+	
+	@Autowired
+	private CategoriaServico categoriaServico;
 
 	public List<Produto> listarTodos(Long codigoCategoria) {
 		return produtoRepositorio.findByCategoriaCodigo(codigoCategoria);
@@ -29,6 +32,8 @@ public class ProdutoServico {
 	}
 
 	public Produto salvar(Produto produto) {
+		validarCategoriaDoProdutoExiste(produto.getCategoria().getCodigo());
+		//validarProdutoExiste(produto.getCodigo());
 		validarProdutoDuplicado(produto);
 		return produtoRepositorio.save(produto);
 	}
@@ -57,6 +62,16 @@ public class ProdutoServico {
 		if (produtoEncontrado != null && produtoEncontrado.getCodigo() != produto.getCodigo()) {
 			throw new RegraNegocioException(
 					String.format("O produto %s já está cadastrado", produto.getDescricao().toUpperCase()));
+		}
+	}
+	
+	private void validarCategoriaDoProdutoExiste(Long codigoCategoria) {
+		if (codigoCategoria == null) {
+			throw new RegraNegocioException("A categoria não pode ser nula");
+		}
+		
+		if (categoriaServico.buscarPorId(codigoCategoria).isEmpty()) {
+			throw new RegraNegocioException(String.format("A categoria de código %s informada não existe no cadastro", codigoCategoria)); 
 		}
 	}
 }
