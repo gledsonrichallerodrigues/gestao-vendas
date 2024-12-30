@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "produto")
@@ -26,21 +27,26 @@ public class Produto {
 
 	@Column(name = "descricao")
 	@NotBlank(message = "Descrição")
-	@Length(min = 3, max = 50, message = "Descrição")
+	@Length(min = 3, max = 100, message = "Descrição")
 	private String descricao;
 
+	@NotNull(message = "Quantidade")
 	@Column(name = "quantidade")
 	private Integer quantidade;
 
+	@NotNull(message = "Preço custo")
 	@Column(name = "preco_custo")
 	private BigDecimal precoCusto;
 
+	@NotNull(message = "Preço venda")
 	@Column(name = "preco_venda")
 	private BigDecimal precoVenda;
 
+	@Length(max = 500, message = "Observação")
 	@Column(name = "observacao")
 	private String observacao;
 
+	@NotNull(message = "Código da categoria")
 	@ManyToOne
 	@JoinColumn(name = "codigo_categoria", referencedColumnName = "codigo")
 	private Categoria categoria;

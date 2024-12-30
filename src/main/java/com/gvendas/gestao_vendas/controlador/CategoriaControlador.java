@@ -2,6 +2,7 @@ package com.gvendas.gestao_vendas.controlador;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gvendas.gestao_vendas.dto.CategoriaResponseDTO;
 import com.gvendas.gestao_vendas.entidades.Categoria;
 import com.gvendas.gestao_vendas.servico.CategoriaServico;
 
@@ -44,8 +46,10 @@ public class CategoriaControlador {
 	@WithSpan
 	@Operation(summary = "Listar todas")
 	@GetMapping
-	public List<Categoria> listarTodas() {
-		return categoriaServico.listarTodas();
+	public List<CategoriaResponseDTO> listarTodas() {
+		return categoriaServico.listarTodas().stream()
+				.map(categoria -> CategoriaResponseDTO.converterParaCategoriaDTO(categoria))
+				.collect(Collectors.toList());
 	}
 
 	@WithSpan
@@ -59,20 +63,22 @@ public class CategoriaControlador {
 	@Operation(summary = "Teste Jaeger")
 	@GetMapping("/testejaeger")
 	public String testeJaeger() {
-        Span span = tracer.spanBuilder("testeJaeger").startSpan();
-        try {
-        	return "String Teste Jaeger";
-        } finally {
-            span.end();
-        }						
+		Span span = tracer.spanBuilder("testeJaeger").startSpan();
+		try {
+			return "String Teste Jaeger";
+		} finally {
+			span.end();
+		}
 	}
 
 	@WithSpan
 	@Operation(summary = "Buscar por id")
 	@GetMapping("/{codigo}")
-	public ResponseEntity<Optional<Categoria>> buscarPorId(@PathVariable Long codigo) {
+	public ResponseEntity<CategoriaResponseDTO> buscarPorId(@PathVariable Long codigo) {
 		Optional<Categoria> categoria = categoriaServico.buscarPorId(codigo);
-		return categoria.isPresent() ? ResponseEntity.ok(categoria) : ResponseEntity.notFound().build();
+		return categoria.isPresent()
+				? ResponseEntity.ok(CategoriaResponseDTO.converterParaCategoriaDTO(categoria.get()))
+				: ResponseEntity.notFound().build();
 
 	}
 
